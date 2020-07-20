@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>{% block title %}Home{% endblock %}</title>
+{% endblock %}
+{% block body %}
+    {% block content %}
+        <form method="post" action="/">
+            {{ form.csrf_token }}
+        </form>
+        <h2 class="Title">Food Trucks</h2>
+        <div class="Truck-Table">
+            {% if Trucks|length %}
+                <table id="TrucksTable">
+                    <tr>
+                        <th onclick="sortTable(0, 'TrucksTable')" data-href="Name">Truck</th>
+                        <th onclick="sortTable(1, 'TrucksTable')" data-href="Category">Category</th>
+                        <th onclick="sortTable(2, 'TrucksTable')" data-href="Rating">Rating</th>
+                    </tr>
+                    {% for x in Trucks %}
+                        <tr onclick='MoreInfo("{{ x }}")'>
+                            <td><img src="{{ Trucks[x]['Avatar'] }}" alt=""><br>{{ x }}</td>
+                            <td>
+                                {% if Trucks[x]['Category'] == '' %}
+                                    No Category Listed
+                                {% else %}
+                                    {{ Trucks[x]['Category'] }}
+                                {% endif %}</td>
+                            {% if Trucks[x]['Rating']['Avg']['val'] == 'No Ratings' %}
+                                {% set datr = 0 %}
+                            {% else %}
+                                {% set datr = Trucks[x]['Rating']['Avg']['val'] %}
+                            {% endif %}
+                            <td data-rating="{{ datr }}">
+                                {% if Trucks[x]['Rating']['Avg']['val'] == 'No Ratings' %}
+                                    {{ Trucks[x]['Rating']['Avg']['val'] }}
+                                {% else %}
+                                    {% set left = 5 - Trucks[x]['Rating']['Avg']['val']|int %}
+                                    {% for i in range(0, Trucks[x]['Rating']['Avg']['val']|int) %}
+                                        <span class="fa fa-star checked"></span>
+                                    {% endfor %}
+                                    {% if Trucks[x]['Rating']['Avg']['d'] == 0.5 %}
+                                        {% set left = left - 1 %}
+                                        <span class="fa fa-star-half-alt checked"></span>
+                                    {% endif %}
+                                    {% for i in range(0, left|int) %}
+                                        <span class="fa fa-star"></span>
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr class="visuallyHidden collapse" id="{{ x }}">
+                            <td class="collapse">{{ x }}</td>
+                            {# Hacky ass shit to get the sorting function to work for the collapsed info correctly #}
+                            <td class="collapse">
+                                {% if Trucks[x]['Category'] == '' %}
+                                    No Category Listed
+                                {% else %}
+                                    {{ Trucks[x]['Category'] }}
+                                {% endif %}</td>
+                            <td class="collapse" data-rating="{{ datr }}">
+                                {% if Trucks[x]['Rating']['Avg']['val'] == 'No Ratings' %}
+                                    {{ Trucks[x]['Rating']['Avg']['val'] }}
+                                {% else %}
+                                    {% set left = 5 - Trucks[x]['Rating']['Avg']['val']|int %}
+                                    {% for i in range(0, Trucks[x]['Rating']['Avg']['val']|int) %}
+                                        <span class="fa fa-star checked"></span>
+                                    {% endfor %}
+                                    {% if Trucks[x]['Rating']['Avg']['d'] == 0.5 %}
+                                        {% set left = left - 1 %}
+                                        <span class="fa fa-star-half-alt checked"></span>
+                                    {% endif %}
+                                    {% for i in range(0, left|int) %}
+                                        <span class="fa fa-star"></span>
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                            <td colspan="3">
+                                <img src="{{ Trucks[x]['Cover'] }}" alt="">
+                                <p class="bio">{{ Trucks[x]['Bio'] }}</p>
+                                <div class="ratings">
+                                    <p>Speed:
+                                        {% if Trucks[x]['Rating']['Speed']['val'] == 'No Ratings' %}
+                                            {{ Trucks[x]['Rating']['Speed']['val'] }}
+                                        {% else %}
+                                            {% set left = 5 - Trucks[x]['Rating']['Speed']['val']|int %}
+                                            {% for i in range(0, Trucks[x]['Rating']['Speed']['val']|int) %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% endfor %}
+                                            {% if Trucks[x]['Rating']['Speed']['d'] == 0.5 %}
+                                                {% set left = left - 1 %}
+                                                <span class="fa fa-star-half-alt checked"></span>
+                                            {% endif %}
+                                            {% for i in range(0, left|int) %}
+                                                <span class="fa fa-star"></span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </p>
+                                    <p>Quality:
+                                        {% if Trucks[x]['Rating']['Quality']['val'] == 'No Ratings' %}
+                                            {{ Trucks[x]['Rating']['Quality']['val'] }}
+                                        {% else %}
+                                            {% set left = 5 - Trucks[x]['Rating']['Quality']['val']|int %}
+                                            {% for i in range(0, Trucks[x]['Rating']['Quality']['val']|int) %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% endfor %}
+                                            {% if Trucks[x]['Rating']['Quality']['d'] == 0.5 %}
+                                                {% set left = left - 1 %}
+                                                <span class="fa fa-star-half-alt checked"></span>
+                                            {% endif %}
+                                            {% for i in range(0, left|int) %}
+                                                <span class="fa fa-star"></span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </p>
+                                    <p>Value:
+                                        {% if Trucks[x]['Rating']['Value']['val'] == 'No Ratings' %}
+                                            {{ Trucks[x]['Rating']['Value']['val'] }}
+                                        {% else %}
+                                            {% set left = 5 - Trucks[x]['Rating']['Value']['val']|int %}
+                                            {% for i in range(0, Trucks[x]['Rating']['Value']['val']|int) %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% endfor %}
+                                            {% if Trucks[x]['Rating']['Value']['d'] == 0.5 %}
+                                                {% set left = left - 1 %}
+                                                <span class="fa fa-star-half-alt checked"></span>
+                                            {% endif %}
+                                            {% for i in range(0, left|int) %}
+                                                <span class="fa fa-star"></span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <a href="{{ Trucks[x]['Socials']['Website'] }}">{{ Trucks[x]['Socials']['Website'] }}</a>
+                                {% if Trucks[x]['Socials']['Facebook'] != '' %}
+                                    <a href="{{ Trucks[x]['Socials']['Facebook'] }}">
+                                        <img class="icon" alt="Facebook" src="{{ url_for('static', filename='images/icons/f_logo_RGB-Blue_58.png') }}"></a>
+                                {% endif %}
+                                {% if Trucks[x]['Socials']['Instagram'] != '' %}
+                                    <a href="https://instagram.com/{{ Trucks[x]['Socials']['Instagram'] }}">
+                                    <img class="icon" alt="Instagram" src="{{ url_for('static', filename='images/icons/glyph-logo_May2016.png') }}"></a>
+                                {% endif %}
+                                {% if Trucks[x]['Socials']['Twitter'] != '' %}
+                                    <a href="http://twitter.com/{{ Trucks[x]['Socials']['Twitter'] }}">
+                                    <img class="icon" alt="Twitter" src="{{ url_for('static', filename='images/icons/twitter.png') }}">
+                                    </a>
+                                {% endif %}
+                                {% if g.user.is_authenticated %}
+                                    <div class="form-container">
+                                        {% macro render_field(field) %}
+                                            <dt>{{ field.label }}
+                                            <dd>{{ field(**kwargs)|safe }}
+                                                {% if field.errors %}
+                                                    <ul class=errors>
+                                                        {% for error in field.errors %}
+                                                            <li>{{ error }}</li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </dd>
+                                        {% endmacro %}
+                                        <div class="rating-form-container">
+                                            <form name="rating" method="post" action="{{ url_for('admin.rate') }}"
+                                                  class="rating-form">
+                                                <div class="row">
+                                                    {{ render_field(form.speed) }}
+                                                </div>
+                                                <div class="row">
+                                                    {{ render_field(form.quality) }}
+                                                </div>
+                                                <div class="row">
+                                                    {{ render_field(form.Value) }}
+                                                </div>
+                                                <div class="row">
+                                                    {{ render_field(form.comment) }}
+                                                </div>
+                                                <div class="row2">
+                                                    {{ form.truck(value=x)|safe }}
+                                                </div>
+                                                <div class="row">
+                                                    <input type="submit" value="Submit">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if Trucks[x]['Ratings']|length %}
+                                    <button onclick='MoreInfo("{{ x }}-ratings")'>See User Ratings</button>
+                                    <table id="{{ x }}-ratings" class="ratingstbl visuallyHidden collapse">
+                                        <tr>
+                                            <th onclick="sortTable(0, '{{ x }}-ratings')" data-href="Username">User</th>
+                                            <th onclick="sortTable(1, '{{ x }}-ratings')" data-href="Average Rating">
+                                                User Rating
+                                            </th>
+                                            <th onclick="sortTable(2, '{{ x }}-ratings')" data-href="Comment">Comment
+                                            </th>
+                                        </tr>
+                                        {% for r in Trucks[x]['Ratings'] %}
+                                            <tr>
+                                                <td>{{ r }}</td>
+                                                <td>
+                                                    {% set left = 5 - Trucks[x]['Ratings'][r]['avg']['val']|int %}
+                                                    {% for i in range(0, Trucks[x]['Ratings'][r]['avg']['val']|int) %}
+                                                        <span class="fa fa-star checked"></span>
+                                                    {% endfor %}
+                                                    {% if Trucks[x]['Ratings'][r]['avg']['d'] == 0.5 %}
+                                                        {% set left = left - 1 %}
+                                                        <span class="fa fa-star-half-alt checked"></span>
+                                                    {% endif %}
+                                                    {% for i in range(0, left|int) %}
+                                                        <span class="fa fa-star"></span>
+                                                    {% endfor %}
+                                                </td>
+                                                <td>
+                                                    {% if Trucks[x]['Ratings'][r]['comment'] is none %}
+                                                        N/A
+                                                    {% else %}
+                                                        {{ Trucks[x]['Ratings'][r]['comment'] }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <script>
+                    function sortTable(n, id) {
+                        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+                        table = document.getElementById(id);
+                        switching = true;
+                        dir = "asc";
+                        while (switching) {
+                            switching = false;
+                            rows = table.rows;
+                            for (i = 1; i < (rows.length - 1); i++) {
+                                shouldSwitch = false;
+                                x = rows[i].getElementsByTagName("TD")[n];
+                                y = rows[i + 1].getElementsByTagName("TD")[n];
+                                if (dir == "asc") {
+                                    if (n == 2){
+                                        if (x.getAttribute('data-rating') > y.getAttribute('data-rating')) {
+                                         shouldSwitch = true;
+                                         break;
+                                        }
+                                    }else {
+                                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                            shouldSwitch = true;
+                                            break;
+                                        }
+                                    }
+                                } else if (dir == "desc") {
+                                    if (n == 2){
+                                        if (x.getAttribute('data-rating') < y.getAttribute('data-rating')) {
+                                         shouldSwitch = true;
+                                         break;
+                                        }
+                                    }else {
+                                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                            shouldSwitch = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            if (shouldSwitch) {
+                                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                                switching = true;
+                                switchcount++;
+                            } else {
+                                if (switchcount == 0 && dir == "asc") {
+                                    dir = "desc";
+                                    switching = true;
+                                }
+                            }
+                        }
+                    }
+                </script>
+            {% else %}
+                <h3>There Doesn't appear to be any Trucks in the Database currently. Please contact the system
+                    Administrator and request the Database be Updated</h3>
+            {% endif %}
+        </div>
+    {% endblock %}
+{% endblock %}

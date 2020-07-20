@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>{% block title %}Data{% endblock %}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+{% endblock %}
+{% block body %}
+    {% block content %}
+{#        <form method="post" action="/">#}
+{#            {{ form.csrf_token }}#}
+{#        </form>#}
+        <h2 class="Title">Data</h2>
+        {% if trucks|length %}
+            <script>
+
+            Chart.defaults.global.animationSteps = 50;
+            Chart.defaults.global.tooltipYPadding = 16;
+            Chart.defaults.global.tooltipCornerRadius = 0;
+            Chart.defaults.global.tooltipTitleFontStyle = "normal";
+            Chart.defaults.global.tooltipFillColor = "rgba(0,0,0,0.8)";
+            Chart.defaults.global.animationEasing = "easeOutBounce";
+            Chart.defaults.global.responsive = false;
+            Chart.defaults.global.scaleLineColor = "black";
+            Chart.defaults.global.scaleFontSize = 16;
+
+                function UpdateValues(x){
+
+                    $.getJSON("{{ url_for('admin.get_data') }}",{
+                     Name: x
+                    }, function(data) {
+                        console.log(data.result)
+                        var linedata = {
+                            labels: [],
+                            datasets: [{
+                                    backgroundColor: "rgba(151,187,205,0.2)",
+                                    borderColor: "rgba(151,187,205,1)",
+                                    borderStrokeColor: "#fff",
+                                    pointHitRadius: 10,
+                                    radius: 0,
+                                    label: 'Rating',
+                                    data: []
+                                },
+                                {
+                                    backgroundColor: "rgba(205,151,151,0.2)",
+                                    borderColor: "rgba(205,151,151, 1)",
+                                    borderStrokeColor: "#fff",
+                                    pointHitRadius: 10,
+                                    radius: 0,
+                                    label: '% of 5 star scores',
+                                    data: []
+                                }]
+                        }
+                        for (let [key, value] of Object.entries(data.result)) {
+                            linedata.labels.push(key)
+                            linedata.datasets[0].data.push(value['ups'])
+                            linedata.datasets[1].data.push(value['freq'])
+                        }
+
+
+                        var ctx = document.getElementById(x + "-chart").getContext('2d')
+                        var steps = 10
+                        var max = 100
+                        var lineChart = new Chart(ctx, {
+                            type: 'line',
+                            data: linedata,
+                            options: {
+                                animation: {
+                                    duration: 0 // general animation time
+                                },
+                                elements: {
+                                    line: {
+                                        tension: 0 // Bezier Curve
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: "Average Rating over time for '"+x+"' Food Truck",
+                                },
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            stepSize: Math.ceil(max / steps),
+                                            beginAtZero: true,
+                                            suggestedMin: 0,
+                                            suggestedMax: max,
+                                            callback: function(value, index, values) {
+                                                return value + '%';
+                                            }
+                                        }
+                                    }],
+                                    xAxes: [{
+                                        label: "Date",
+                                       ticks: {
+                                           autoSkip: false,
+                                       }
+                                    }],
+                                    gridLines: [{
+                                        Color: 'rgba(151,187,205,1)'
+                                    }]
+                                }
+                            }
+                        });
+                    })
+                }
+            </script>
+            <table class="cat-table">
+            {% for x in trucks %}
+                    <tr><td onclick="MoreInfo('{{ x }}')">{{ x }}</td></tr>
+                    <tr class="collapse" id="{{ x }}">
+                        <td class="shell">
+                            <table id="data-truck-table">
+                                <tr>
+                                    <th onclick="sortTable(0, 'data-truck-table')">Truck Name</th>
+                                    <th onclick="sortTable(1, 'data-truck-table')">Average Rating</th>
+                                    <th onclick="sortTable(2, 'data-truck-table')">Variance</th>
+                                    <th onclick="sortTable(3, 'data-truck-table')">User Traffic</th>
+                                </tr>
+                                {% for i in trucks[x] %}
+                                    <tr>
+                                        <td>{{ i }}</td>
+                                        <td>{{ trucks[x][i]['avg'] }}</td>
+                                        <td>{{ trucks[x][i]['var'] }}</td>
+                                        <td>{{ trucks[x][i]['traffic'] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"><canvas id="{{ i }}-chart" width="550" height="400"></canvas></td>
+                                        <script>
+                                            UpdateValues('{{ i }}')
+                                        </script>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+            {% endfor %}
+            <script>
+                    function sortTable(n, id) {
+                        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+                        table = document.getElementById(id);
+                        switching = true;
+                        dir = "asc";
+                        while (switching) {
+                            switching = false;
+                            rows = table.rows;
+                            for (i = 1; i < (rows.length - 1); i++) {
+                                shouldSwitch = false;
+                                x = rows[i].getElementsByTagName("TD")[n];
+                                y = rows[i + 1].getElementsByTagName("TD")[n];
+                                if (dir == "asc") {
+                                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                } else if (dir == "desc") {
+                                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (shouldSwitch) {
+                                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                                switching = true;
+                                switchcount++;
+                            } else {
+                                if (switchcount == 0 && dir == "asc") {
+                                    dir = "desc";
+                                    switching = true;
+                                }
+                            }
+                        }
+                    }
+                </script>
+            </table>
+            <h2 class="Title">Refresh</h2>
+            <a href="{{ url_for('admin.refresh') }}">Refresh the Database</a>
+            <h2 class="Title">Email Users</h2>
+            <a href="{{ url_for('admin.manual_email') }}">Send Recommendations</a>
+            <h2 class="Title">Update Cache</h2>
+            <a href="{{ url_for('admin.update_cache') }}">Update Cache</a>
+        {% endif %}
+    {% endblock %}
+{% endblock %}

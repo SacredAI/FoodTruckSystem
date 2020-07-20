@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-AU">
+<head>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Food Trucks - {% block title %}{% endblock %} : Queensland Government</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for( 'static', filename='css/style.css' ) }}" media="all">
+    <link rel="stylesheet" type="text/css" href="{{ url_for( 'static', filename="css/qg.css" ) }}" media="all">
+    <link href="{{ url_for( 'static', filename="css/layout-small.css" ) }}" media="all" rel="stylesheet"
+          type="text/css">
+    <link href="{{ url_for( 'static', filename="css/layout-medium.css" ) }}"
+          media="only all and (min-width: 43em) and (max-width: 65em)" rel="stylesheet" type="text/css">
+    <link href="{{ url_for( 'static', filename="css/layout-large.css" ) }}" media="only all and (min-width: 65em)"
+          rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="{{ url_for( 'static', filename="images/favicon.ico") }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+          integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+    url_for('static', filename='js/jquery/jquery.js') }}">\x3C/script>')</script>
+    <script>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for( 'static', filename="theme/agency.css") }}" media="all">
+    <link rel="stylesheet" type="text/css" href="{{ url_for( 'static', filename="theme/bs-layout-large.css") }}"
+          media="only all and (min-width: 65em)">
+    {% block head %}{% endblock %}
+<body class="application">
+    <div id="access">
+        <h2>Skip links and keyboard navigation</h2>
+        <ul>
+            <li><a href="#content">Skip to content</a></li>
+
+            <li><a href="#footer">Skip to footer</a></li>
+            <li><a href="http://www.qld.gov.au/help/accessibility/keyboard.html#section-aria-keyboard-navigation">Use tab
+                and cursor keys to move around the page (more information)</a></li>
+        </ul>
+    </div>
+    <div id="header">
+        <div class="box-sizing">
+            <div class="max-width">
+                <h2>Site header</h2>
+                <a id="qg-coa" href="http://www.qld.gov.au/">
+                    <img src="{{ url_for( 'static', filename="theme/qg-coa.png") }}" width="287" height="50" alt="Queensland Government">
+                    <img src="{{ url_for( 'static', filename="images/qg-coa-print.png") }}" class="print-version" alt="">
+                </a>
+                <ul id="tools">
+                    <li><a accesskey="3" href="http://www.qld.gov.au/#sitemap">Site map</a></li>
+                    <li><a accesskey="4" href="http://www.qld.gov.au/contact/">Contact us</a></li>
+                    <li><a href="http://www.qld.gov.au/help/">Help</a></li>
+                    <li>
+                        {% if not g.user.is_authenticated %}
+                            <a href="{{ url_for('user.login') }}">Login/Signup</a>
+                        {% else %}
+                            <div class="u-drop-container">
+                                <a id='user' onclick="userDrop()">{{ g.user.username }}</a>
+                                <div id="user-drop" class="user-dropdown">
+                                    <ul class="drop-items">
+                                        {% if g.user.perms %}
+                                            <li class="drop-items-li"><a id="drop-item-data" class="drop-items-a" href="{{ url_for('admin.main') }}">Data</a></li>
+                                        {% endif %}
+                                        <li class="drop-items-li"><a id="drop-item-settings" class="drop-items-a" href="{{ url_for('user.settings') }}">Settings</a></li>
+                                        <li class="drop-items-li"><a id="drop-item-logout" class="drop-items-a" href="{{ url_for('user.logout') }}">Log-out</a></li>
+                                    </ul>
+                                </div>
+                            <script>
+                                /* When the user clicks on the button,
+                                toggle between hiding and showing the dropdown content */
+                                function userDrop() {
+                                  document.getElementById("user-drop").classList.toggle("show");
+                                }
+
+                                // Close the dropdown if the user clicks outside of it
+                                window.onclick = function(event) {
+                                  if (!event.target.matches('#user')) {
+                                    let dropdowns = document.getElementsByClassName("user-dropdown");
+                                    let i;
+                                    for (i = 0; i < dropdowns.length; i++) {
+                                      let openDropdown = dropdowns[i];
+                                      if (openDropdown.classList.contains('show')) {
+                                        openDropdown.classList.remove('show');
+                                      }
+                                    }
+                                  }
+                                }
+                            </script>
+                        </div>
+                        {% endif %}
+                    </li>
+                    <li class="last-child">
+                        <form action="http://pan.search.qld.gov.au/search/search.cgi" id="search-form">
+                            <div class="search-wrapper">
+                                <label for="search-query">Search Queensland Government</label>
+                                <input accesskey="5" type="text" name="query" id="search-query" size="27" value="">
+                                <input type="submit" class="submit" value="Search">
+                                <input type="hidden" name="num_ranks" value="10">
+                                <input type="hidden" name="tiers" value="off">
+                                <input type="hidden" name="collection" value="qld-gov">
+                                <input type="hidden" name="profile" value="qld">
+                            </div>
+                        </form>
+                    </li>
+                </ul>
+                <h2 id="site-name"><a href="/" accesskey="2" style="font-size: 110%">
+                    Food Truck Reviews
+                    <img src="{{ url_for( 'static', filename="theme/site-name-print.png") }}" height="28"
+                         class="print-version" alt="">
+                </a></h2>
+            </div>
+        </div>
+    </div>
+    <div id="page-container">
+        <div class="max-width">
+            <div id="content-container">
+                <div id="breadcrumbs">
+    {#                TODO: Make this work hehe#}
+                    <h2>You are here:</h2>
+                    <ol>
+                        <li><a href="{{ url_for('index') }}">Home</a></li>
+                        {% if BreadCrumbs|length %}
+                            {% set l = BreadCrumbs|length %}
+                            {% for x in BreadCrumbs %}
+                                {% if l == 1 %}
+                                    <li class="last-child">{{ x }}</li>
+                                {% else %}
+                                    <li><a href="{{ url_for(BreadCrumbs[x]) }}">{{ x }}</a></li>
+                                {% endif %}
+                                {% set l = l - 1 %}
+                            {% endfor %}
+                        {% endif %}
+                    </ol>
+                </div>
+                <div id="content">
+                    <div class="article">
+                        <div class="box-sizing">
+                            {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                    <ul class=flashes>
+                                        {% for message in messages %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            {% endwith %}
+                            <h1>Applications</h1>
+                            {% block content %}{% endblock %}
+                            <script>
+                                function MoreInfo(x) {
+                                    let box = document.getElementById(x)
+                                        if (box.classList.contains('collapse')) {
+                                            box.classList.remove('collapse');
+                                            setTimeout(function () {
+                                                box.classList.remove('visuallyHidden');
+                                            }, 20);
+                                        } else {
+                                            box.classList.add('visuallyHidden');
+                                            box.addEventListener('transitionend', function (e) {
+                                                box.classList.add('collapse');
+                                            }, {
+                                                capture: false,
+                                                once: true,
+                                                passive: false
+                                            });
+                                        }
+
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <div id="fat-footer">
+            <div class="max-width">
+                <div class="box-sizing">
+                    <h2>Explore this site</h2>
+                    <div class="section">
+                        <h3><a href="/about/">Information about</a></h3>
+                        <ul>
+                            <li><a href="/about/driving-and-transport/">Driving and public transport</a></li>
+                            <li><a href="/about/education-and-learning/">Education and learning</a></li>
+                            <li><a href="/about/environment-and-resources/">Environment and resources</a></li>
+                            <li><a href="/about/health-and-communities/">Health and communities</a></li>
+                            <li><a href="/about/jobs-and-work/">Jobs and work</a></li>
+                            <li><a href="/about/law-and-safety/">Law and safety</a></li>
+                            <li><a href="/about/business-and-industry/">Business and industry</a></li>
+                            <li><a href="/about/leisure-and-culture/">Leisure and culture</a></li>
+                        </ul>
+                    </div>
+                    <div class="section">
+                        <h3><a href="/government/">Government</a></h3>
+                        <ul>
+                            <li><a href="/government/levels-of-government.html">Levels of government</a></li>
+                            <li><a href="/government/about-the-queensland-government.html">About the Queensland
+                                Government</a></li>
+                            <li><a href="/government/constitution-and-governor.html">Constitution and Governor</a></li>
+                            <li><a href="/government/system-of-government.html">System of government</a></li>
+                            <li><a href="/government/rights-and-responsibilities.html">Rights and responsibilities</a></li>
+                            <li><a href="/government/elections-and-parliament.html">Elections and parliament</a></li>
+                            <li><a href="/government/legislation.html">Legislation</a></li>
+                            <li><a href="/government/departments/">Departments</a></li>
+                            <li><a href="/government/other-government-bodies/">Other government bodies</a></li>
+                            <li><a href="/government/publications/">Reports and publications</a></li>
+                            <li><a href="/government/contacts.html">Contacts</a></li>
+                        </ul>
+                    </div>
+                    <div class="section">
+                        <h3><a href="/about-queensland/">About Queensland</a></h3>
+                        <ul>
+                            <li><a href="/about-queensland/moving.html">Moving to Queensland</a></li>
+                            <li><a href="/about-queensland/history/">Queensland's history</a></li>
+                            <li><a href="/about-queensland/sister-states.html">Sister states</a></li>
+                        </ul>
+                    </div>
+                    <div class="section">
+                        <h3><a href="/announcements/">Announcements</a></h3>
+                        <ul>
+                            <li><a href="/announcements/?region=darlingDownsWestMoreton">Darling Downs / West Moreton</a>
+                            </li>
+                            <li><a href="/announcements/?region=farNorth">Far North Queensland</a></li>
+                            <li><a href="/announcements/?region=fitzroy">Fitzroy</a></li>
+                            <li><a href="/announcements/?region=greaterBrisbane">Greater Brisbane</a></li>
+                            <li><a href="/announcements/?region=mackayWhitsunday">Mackay / Whitsunday</a></li>
+                            <li><a href="/announcements/?region=north">North Queensland</a></li>
+                            <li><a href="/announcements/?region=northCoast">North Coast</a></li>
+                            <li><a href="/announcements/?region=southCoast">South Coast</a></li>
+                            <li><a href="/announcements/?region=west">West Queensland</a></li>
+                            <li><a href="/announcements/?region=wideBayBurnett">Wide Bay Burnett</a></li>
+                        </ul>
+                    </div>
+                    <div class="section">
+                        <h3><a href="/comment/">Comment on</a></h3>
+                        <h3><a href="/my-community/">My community</a></h3>
+                        <h3><a href="/services/">Services online</a></h3>
+                        <h3><a href="/grants/">Grants</a></h3>
+                        <h3 class="feed-link"><a href="/help/feeds/">XML feeds</a></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="max-width">
+            <div class="box-sizing">
+                <h2>Site footer</h2>
+                <ul>
+                    <li class="legal"><a href="http://www.qld.gov.au/legal/copyright/">Copyright</a></li>
+                    <li class="legal"><a href="http://www.qld.gov.au/legal/disclaimer/">Disclaimer</a></li>
+                    <li class="legal"><a href="http://www.qld.gov.au/legal/privacy/">Privacy</a></li>
+                    <li class="legal"><a href="http://www.qld.gov.au/right-to-information/">Right to information</a></li>
+                    <li><a href="http://www.qld.gov.au/help/access/">Accessibility</a></li>
+                    <li><a href="http://www.smartjobs.qld.gov.au/">Jobs in Queensland Government</a></li>
+                    <li id="languages"><a href="http://www.qld.gov.au/languages/">Other languages</a></li>
+                </ul>
+                <p class="legal">&copy; The State of Queensland (agency name) 2010&ndash;2013</p>
+                <p><a href="http://www.qld.gov.au/" accesskey="1">Queensland Government</a></p>
+                <div id="qg-branding"><p><img class="tagline"
+                                              src="{{ url_for( 'static', filename="theme/qg-tagline-footer.png") }}"
+                                              alt="Great state. Great opportunity."></p></div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="{{ url_for( 'static', filename="js/qg.js") }}"></script>
+    <script type="text/javascript" src="{{ url_for( 'static', filename="theme/column-heights.js") }}"></script>
+</body>
+</html>

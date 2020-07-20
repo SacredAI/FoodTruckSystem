@@ -1,0 +1,11 @@
+wtforms
+sqlalchemy
+flask
+flask-SQLAlchemy
+flask-RESTful
+passlib
+email-validator~= 1.0.5
+requests
+flask-login
+flask-wtf
+flask-mail
